@@ -74,6 +74,17 @@ def _friendly_error(exc: BaseException) -> str:
             "(or FreeTDS), then run `odbcinst -q -d` and set MSSQL_ODBC_DRIVER in .env "
             "to the exact driver name listed."
         )
+    if (
+        "handshakes before login" in low
+        or "during handshakes" in low
+        or ("(26)" in msg and "sql server" in low)
+    ):
+        return (
+            "Handshake failed before login (error 26). Often: wrong TCP port or not SQL Server, "
+            "TLS/TDS mismatch (try MSSQL_ENCRYPT=no on a private test network), or ODBC Driver 18 "
+            "with a very old SQL Server (2012+ expected; try ODBC Driver 17 + MSSQL_ODBC_DRIVER). "
+            "Confirm DB_HOST/DB_PORT and check the SQL Server error log on the server."
+        )
 
     return msg[:500] if len(msg) > 500 else msg
 

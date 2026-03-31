@@ -91,6 +91,8 @@ After step 1–2, list drivers with `odbcinst -q -d` (Linux/macOS) or ODBC Data 
 
 If you see **`SSL Provider` / `unsupported protocol`**, the ODBC driver and server disagree on TLS (common with **ODBC Driver 18** on Ubuntu and older SQL Server). The tool defaults to **`Encrypt=optional`** via **`MSSQL_ENCRYPT`**; if needed for a private test network only, try **`MSSQL_ENCRYPT=no`**, or enable **TLS 1.2** on SQL Server.
 
+If you see **handshakes before login / error (26)**, verify **`DB_PORT`** points at the SQL Server TCP port (not another service), try **`MSSQL_ENCRYPT=no`** for testing, or install **ODBC Driver 17** and set **`MSSQL_ODBC_DRIVER`** if the server is older than SQL Server 2012.
+
 #### If `odbcinst` says `SQLGetPrivateProfileString failed`
 
 unixODBC is installed, but it cannot read the driver config (wrong paths, bad permissions, or broken `.ini` files). Try in order:
