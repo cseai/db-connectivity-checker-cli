@@ -2,15 +2,16 @@
 
 import pyodbc
 
-from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
+from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, MSSQL_ODBC_DRIVER
 
-# Adjust if your system uses another ODBC driver name (see `odbcinst -q -d`).
-_DEFAULT_DRIVER = "ODBC Driver 18 for SQL Server"
+# Used only when MSSQL_ODBC_DRIVER is not set in .env. Prefer setting MSSQL_ODBC_DRIVER
+# to match `odbcinst -q -d` on this machine (names differ: 17 vs 18, FreeTDS, etc.).
+_FALLBACK_DRIVER = "ODBC Driver 17 for SQL Server"
 
 
 def connect():
     port = int(DB_PORT) if DB_PORT else 1433
-    driver = _DEFAULT_DRIVER
+    driver = MSSQL_ODBC_DRIVER or _FALLBACK_DRIVER
     conn_str = (
         f"DRIVER={{{driver}}};"
         f"SERVER={DB_HOST},{port};"

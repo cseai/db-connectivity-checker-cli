@@ -55,6 +55,14 @@ def _friendly_error(exc: BaseException) -> str:
         return "Host could not be resolved (check DB_HOST)."
     if "ssl" in low and "certificate" in low:
         return f"SSL/certificate error: {msg[:200]}"
+    if "can't open lib" in low or (
+        "file not found" in low and ("driver" in low or "sqldriverconnect" in low)
+    ):
+        return (
+            "ODBC driver library not found. Install Microsoft's ODBC Driver for SQL Server "
+            "(or FreeTDS), then run `odbcinst -q -d` and set MSSQL_ODBC_DRIVER in .env "
+            "to the exact driver name listed."
+        )
 
     return msg[:500] if len(msg) > 500 else msg
 
