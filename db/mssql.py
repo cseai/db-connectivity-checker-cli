@@ -8,6 +8,7 @@ from config import (
     DB_PASSWORD,
     DB_PORT,
     DB_USER,
+    DEBUG,
     MSSQL_ENCRYPT,
     MSSQL_ODBC_DRIVER,
 )
@@ -32,6 +33,15 @@ def connect():
         "TrustServerCertificate=yes;"
         "LoginTimeout=5;"
     )
+    if DEBUG:
+        import logger
+
+        safe = conn_str.replace(DB_PASSWORD, "***") if DB_PASSWORD else conn_str
+        logger.info(
+            f"ODBC MSSQL_ENCRYPT effective value: {MSSQL_ENCRYPT!r} "
+            "(shell env can override .env; run `unset MSSQL_ENCRYPT` if wrong)"
+        )
+        logger.info(f"ODBC connection string (sanitized): {safe}")
     return pyodbc.connect(conn_str, timeout=5)
 
 

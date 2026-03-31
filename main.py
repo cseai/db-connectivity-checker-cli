@@ -70,9 +70,11 @@ def _friendly_error(exc: BaseException) -> str:
         "file not found" in low and ("driver" in low or "sqldriverconnect" in low)
     ):
         return (
-            "ODBC driver library not found. Install Microsoft's ODBC Driver for SQL Server "
-            "(or FreeTDS), then run `odbcinst -q -d` and set MSSQL_ODBC_DRIVER in .env "
-            "to the exact driver name listed."
+            "This PC cannot load the ODBC driver named in MSSQL_ODBC_DRIVER (wrong name or "
+            "that driver is not installed). Run `odbcinst -q -d` and set MSSQL_ODBC_DRIVER "
+            "to an exact line from that list. Prefer 'ODBC Driver 18 for SQL Server' if apt "
+            "only offers msodbcsql18 (e.g. Ubuntu 24.04). msodbcsql17 may be unavailable on "
+            "your distro; use Driver 18 and tune MSSQL_ENCRYPT if the server is older."
         )
     if (
         "handshakes before login" in low
@@ -80,10 +82,11 @@ def _friendly_error(exc: BaseException) -> str:
         or ("(26)" in msg and "sql server" in low)
     ):
         return (
-            "Handshake failed before login (error 26). Often: wrong TCP port or not SQL Server, "
-            "TLS/TDS mismatch (try MSSQL_ENCRYPT=no on a private test network), or ODBC Driver 18 "
-            "with a very old SQL Server (2012+ expected; try ODBC Driver 17 + MSSQL_ODBC_DRIVER). "
-            "Confirm DB_HOST/DB_PORT and check the SQL Server error log on the server."
+            "Handshake failed before login (error 26)—driver ↔ server, not this CLI. If "
+            "MSSQL_ENCRYPT=no is already in .env, run `unset MSSQL_ENCRYPT` (shell exports override "
+            ".env) and set DEBUG=true to confirm the effective Encrypt value. On the SQL Server host, "
+            "check the error log, TCP/port, and SQL Server version (ODBC Driver 18 does not support "
+            "very old versions)."
         )
 
     return msg[:500] if len(msg) > 500 else msg

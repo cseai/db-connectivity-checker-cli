@@ -83,6 +83,8 @@ sudo apt update
 sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
 ```
 
+On **Ubuntu 24.04**, Microsoft’s repo often ships **`msodbcsql18` only**—there may be **no `msodbcsql17` package**. Use **`ODBC Driver 18 for SQL Server`** in `MSSQL_ODBC_DRIVER` and adjust **`MSSQL_ENCRYPT`** if you hit TLS or handshake issues with an older SQL Server.
+
 If you prefer **`wget`**: `wget https://packages.microsoft.com/config/ubuntu/$(grep VERSION_ID /etc/os-release | cut -d '"' -f 2)/packages-microsoft-prod.deb` then `sudo dpkg -i packages-microsoft-prod.deb` and continue with `apt update` / `apt install` as above. Remove any empty or broken `mssql-release.list` under `/etc/apt/sources.list.d/` from earlier failed attempts, and delete a zero-byte `/usr/share/keyrings/microsoft-prod.gpg` before retrying.
 
 **Remote SQL Server version:** If the *server* runs **SQL Server 2017** (internal version **14.x** in `SELECT @@VERSION`), you still use **ODBC Driver 17 or 18 for SQL Server** on *this* machine. There is no separate “v14 ODBC driver”—client driver name and server major version are unrelated. ODBC Driver 17+ supports SQL Server 2017 and newer.
