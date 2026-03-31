@@ -55,6 +55,17 @@ def _friendly_error(exc: BaseException) -> str:
         return "Host could not be resolved (check DB_HOST)."
     if "ssl" in low and "certificate" in low:
         return f"SSL/certificate error: {msg[:200]}"
+    if (
+        "ssl provider" in low
+        or "unsupported protocol" in low
+        or "0a000102" in low
+        or "ssl routines" in low
+    ):
+        return (
+            "TLS/SSL handshake failed (often ODBC Driver 18 vs older SQL Server or TLS). "
+            "Try MSSQL_ENCRYPT=optional in .env (default). If it still fails, try "
+            "MSSQL_ENCRYPT=no for a private network test only, or enable TLS 1.2 on the server."
+        )
     if "can't open lib" in low or (
         "file not found" in low and ("driver" in low or "sqldriverconnect" in low)
     ):

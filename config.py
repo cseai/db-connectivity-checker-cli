@@ -16,3 +16,6 @@ DB_NAME = os.getenv("DB_NAME", "")
 
 # MSSQL only: exact ODBC driver name as shown by `odbcinst -q -d` (optional).
 MSSQL_ODBC_DRIVER = (os.getenv("MSSQL_ODBC_DRIVER") or "").strip()
+
+# MSSQL only: ODBC Encrypt= value (optional, no, yes, mandatory, strict). Default optional.
+MSSQL_ENCRYPT = (os.getenv("MSSQL_ENCRYPT") or "optional").strip()

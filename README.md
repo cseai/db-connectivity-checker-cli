@@ -89,6 +89,8 @@ If you prefer **`wget`**: `wget https://packages.microsoft.com/config/ubuntu/$(g
 
 After step 1–2, list drivers with `odbcinst -q -d` (Linux/macOS) or ODBC Data Source Administrator (Windows). If `odbcinst` is still missing, the `unixodbc` package is not installed yet. Put the exact name in `.env` as **`MSSQL_ODBC_DRIVER`** (for example `ODBC Driver 17 for SQL Server`). If you see **Can't open lib … file not found**, the driver is missing or the name does not match what is installed—fix the install or adjust `MSSQL_ODBC_DRIVER`.
 
+If you see **`SSL Provider` / `unsupported protocol`**, the ODBC driver and server disagree on TLS (common with **ODBC Driver 18** on Ubuntu and older SQL Server). The tool defaults to **`Encrypt=optional`** via **`MSSQL_ENCRYPT`**; if needed for a private test network only, try **`MSSQL_ENCRYPT=no`**, or enable **TLS 1.2** on SQL Server.
+
 #### If `odbcinst` says `SQLGetPrivateProfileString failed`
 
 unixODBC is installed, but it cannot read the driver config (wrong paths, bad permissions, or broken `.ini` files). Try in order:
