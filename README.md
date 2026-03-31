@@ -61,6 +61,16 @@ Small CLI to verify you can reach a remote **PostgreSQL**, **MySQL**, or **SQL S
 
 - Run **`python main.py --help`** to see options.
 - Set **`DEBUG=true`** in `.env` if you need the full error traceback.
-- **SQL Server only:** you need an [ODBC driver](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server) installed on this PC. If connection fails with a driver error, check `db/mssql.py` and match `_DEFAULT_DRIVER` to a driver name listed by `odbcinst -q -d` (Linux/macOS) or ODBC Data Source Administrator (Windows).
+
+### SQL Server (`--db_type=mssql`)
+
+`pyodbc` needs two things on the machine, not just `pip`:
+
+1. **ODBC driver manager** (provides `libodbc.so.2` on Linux). If you see `ImportError: libodbc.so.2`, install it first, for example:
+   - **Debian / Ubuntu:** `sudo apt install unixodbc`
+   - **Fedora / RHEL:** `sudo dnf install unixODBC`
+2. **[Microsoft ODBC Driver for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos-linux)** for your OS (Linux, macOS, or Windows).
+
+If the connection fails with a driver name error, list installed drivers (`odbcinst -q -d` on Linux/macOS) and set `_DEFAULT_DRIVER` in `db/mssql.py` to match.
 
 Keep `.env` private; do not commit it to git.

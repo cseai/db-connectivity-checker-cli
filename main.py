@@ -21,6 +21,19 @@ DB_MODULE_PATH = {
 }
 
 
+def _mssql_import_error_message(exc: BaseException) -> str | None:
+    """Explain common pyodbc/ODBC setup issues on Linux (missing libodbc)."""
+    msg = str(exc).lower()
+    if "libodbc" not in msg and "pyodbc" not in msg:
+        return None
+    return (
+        "ODBC is not set up for pyodbc (e.g. missing libodbc.so.2). "
+        "On Debian/Ubuntu: sudo apt install unixodbc. "
+        "On Fedora/RHEL: sudo dnf install unixODBC. "
+        "Then install Microsoft's ODBC Driver for SQL Server for your OS (see README)."
+    )
+
+
 def _friendly_error(exc: BaseException) -> str:
     msg = str(exc).strip()
     low = msg.lower()
@@ -68,7 +81,14 @@ def main() -> int:
             return 1
 
     label = DB_LABELS[args.db_type]
-    mod = importlib.import_module(DB_MODULE_PATH[args.db_type])
+    try:
+        mod = importlib.import_module(DB_MODULE_PATH[args.db_type])
+    except ImportError as exc:
+        hint = _mssql_import_error_message(exc) if args.db_type == "mssql" else None
+        logger.error(hint or f"Failed to load database driver: {exc}")
+        if config.DEBUG:
+            traceback.print_exc()
+        return 1
 
     logger.info(f"Trying {label}...")
     conn = None
